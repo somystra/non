@@ -134,7 +134,6 @@
   <h1>Tandirdan yangi uzilgan non — har kuni sizga yaqin</h1>
   <p id="heroDesc">Non va shirinlik mahsulotlarimiz bilan mahallamizga xizmat qilib kelmoqdamiz.</p>
   <a id="callBtn" href="tel:+998905266668" class="cta">Qo'ng'iroq qilish</a>
-  <a href="#manzil" class="cta secondary">Manzilni ko'rish</a>
 
   <div class="badges">
     <div class="badge"><div class="num">5</div><div class="label">yil non markazi</div></div>
@@ -152,6 +151,12 @@
   <div class="eyebrow">Biz haqimizda</div>
   <h2>Mahalladagi ishonchli manzil</h2>
   <p id="aboutText">Kanditor yo'nalishimiz 16 yildan beri, non markazimiz esa 5 yildan beri mijozlarga sifatli xizmat ko'rsatib kelmoqda. Har kuni yangi tayyorlanadi.</p>
+</section>
+
+<section id="introVideoSection" style="display:none;">
+  <div class="eyebrow">Bizni tanishtiruv</div>
+  <h2>Yaqindan tanishing</h2>
+  <video id="introVideo" controls playsinline style="width:100%;border-radius:16px;background:#000;display:block;"></video>
 </section>
 
 <section id="manzil">
@@ -236,6 +241,10 @@
     if(s.heroDesc) document.getElementById('heroDesc').textContent = s.heroDesc;
     if(s.phone){
       document.getElementById('callBtn').href = 'tel:' + s.phone;
+    }
+    if(s.introVideo){
+      document.getElementById('introVideo').src = s.introVideo;
+      document.getElementById('introVideoSection').style.display = 'block';
     }
     if(s.mapsLink){
       const coords = extractLatLng(s.mapsLink);
