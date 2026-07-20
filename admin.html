@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Axmadjon Non Markazi</title>
+<style>
+  :root{
+    --clay:#A6532A; --clay-dark:#6E3418; --wheat:#D9A441;
+    --flour:#F6EFE3; --charcoal:#2B211A; --line:#E8DCC4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--flour);color:var(--charcoal);font-family:sans-serif;padding:20px;}
+  h1{font-size:1.3rem;color:var(--clay-dark);margin-bottom:20px;}
+  h2{font-size:1rem;color:var(--clay-dark);margin:24px 0 12px;}
+
+  /* Login screen */
+  #loginScreen{
+    max-width:340px;margin:80px auto;text-align:center;
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px 24px;
+  }
+  #loginScreen input{
+    width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;
+    margin:16px 0;font-size:1rem;
+  }
+  #loginScreen button, .btn{
+    background:var(--clay);color:#fff;border:none;padding:12px 20px;
+    border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;
+  }
+  #loginScreen button:hover, .btn:hover{background:var(--clay-dark);}
+  #loginError{color:#B3261E;font-size:0.85rem;margin-top:8px;display:none;}
+
+  /* Admin panel */
+  #panel{display:none;max-width:640px;margin:0 auto;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;}
+  .card label{display:block;font-size:0.82rem;color:#8A7860;margin:10px 0 4px;}
+  .card input, .card textarea{
+    width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:0.9rem;
+    font-family:sans-serif;
+  }
+  .card textarea{min-height:60px;resize:vertical;}
+  .card img.preview{width:70px;height:70px;object-fit:cover;border-radius:8px;margin-top:6px;background:var(--line);}
+  .row-actions{display:flex;gap:8px;margin-top:12px;}
+  .row-actions button{flex:1;padding:9px;border:none;border-radius:8px;font-size:0.85rem;cursor:pointer;font-weight:600;}
+  .save-btn{background:var(--clay);color:#fff;}
+  .save-btn:hover{background:var(--clay-dark);}
+  .delete-btn{background:#F1E6D0;color:var(--clay-dark);}
+  .delete-btn:hover{background:#e8d7b3;}
+  .add-btn{display:block;width:100%;margin-top:6px;padding:12px;background:var(--clay-dark);color:#fff;border:none;border-radius:10px;font-weight:600;cursor:pointer;}
+  .status{font-size:0.82rem;color:#3D7A3D;margin-top:6px;display:none;}
+  .logout{float:right;background:none;border:1px solid var(--line);padding:6px 12px;border-radius:8px;font-size:0.8rem;cursor:pointer;color:#8A7860;}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h1>Admin panel</h1>
+  <p style="font-size:0.85rem;color:#8A7860;">Kirish uchun parolni kiriting</p>
+  <input type="password" id="passInput" placeholder="Parol">
+  <button onclick="tryLogin()">Kirish</button>
+  <div id="loginError">Parol noto'g'ri, qayta urinib ko'ring.</div>
+</div>
+
+<div id="panel">
+  <button class="logout" onclick="logout()">Chiqish</button>
+  <h1>Axmadjon Non Markazi — boshqaruv</h1>
+
+  <h2>Aloqa va sayt ma'lumotlari</h2>
+  <div class="card">
+    <label>Manzil (matn sifatida, ko'rsatish uchun)</label>
+    <input type="text" id="s_address" placeholder="Ko'cha, mahalla, tuman">
+    <label>Google Maps havolasi</label>
+    <input type="text" id="s_mapsLink" placeholder="Google Maps'dan nusxa olingan link">
+    <div style="font-size:0.78rem;color:#8A7860;margin-top:4px;">
+      Google Maps'da joyni toping → "Ulashish" (Share) → "Havolani nusxalash" (Copy link) → shu yerga joylang.
+    </div>
+    <label>Ish vaqti</label>
+    <input type="text" id="s_hours" placeholder="masalan: har kuni 06:00 - 21:00">
+    <label>Telefon raqam</label>
+    <input type="text" id="s_phone" placeholder="+998901234567">
+    <label>Bosh sahifadagi qisqa tavsif</label>
+    <textarea id="s_heroDesc"></textarea>
+    <label>"Biz haqimizda" matni</label>
+    <textarea id="s_aboutText"></textarea>
+    <div class="row-actions">
+      <button class="save-btn" onclick="saveSettings()">Saqlash</button>
+    </div>
+    <div class="status" id="settingsStatus">✔ Saqlandi</div>
+  </div>
+
+  <h2>Mahsulotlar</h2>
+  <div id="productsList"></div>
+  <button class="add-btn" onclick="addProduct()">+ Yangi mahsulot qo'shish</button>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = "nonmarkazi2026"; // shu parolni xohlagancha o'zgartiring
+
+  function tryLogin(){
+    const val = document.getElementById('passInput').value;
+    if(val === ADMIN_PASSWORD){
+      sessionStorage.setItem('nonMarkazi_admin_ok', '1');
+      showPanel();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  }
+  document.getElementById('passInput').addEventListener('keydown', e => {
+    if(e.key === 'Enter') tryLogin();
+  });
+
+  function logout(){
+    sessionStorage.removeItem('nonMarkazi_admin_ok');
+    location.reload();
+  }
+
+  function showPanel(){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+    loadSettingsToForm();
+    renderProductsList();
+  }
+
+  if(sessionStorage.getItem('nonMarkazi_admin_ok') === '1'){
+    showPanel();
+  }
+
+  // ---- Settings ----
+  function loadSettingsToForm(){
+    const s = JSON.parse(localStorage.getItem('nonMarkazi_settings') || '{}');
+    document.getElementById('s_address').value = s.address || '';
+    document.getElementById('s_mapsLink').value = s.mapsLink || '';
+    document.getElementById('s_hours').value = s.hours || '';
+    document.getElementById('s_phone').value = s.phone || '';
+    document.getElementById('s_heroDesc').value = s.heroDesc || '';
+    document.getElementById('s_aboutText').value = s.aboutText || '';
+  }
+
+  function saveSettings(){
+    const s = {
+      address: document.getElementById('s_address').value,
+      mapsLink: document.getElementById('s_mapsLink').value,
+      hours: document.getElementById('s_hours').value,
+      phone: document.getElementById('s_phone').value,
+      heroDesc: document.getElementById('s_heroDesc').value,
+      aboutText: document.getElementById('s_aboutText').value
+    };
+    localStorage.setItem('nonMarkazi_settings', JSON.stringify(s));
+    const status = document.getElementById('settingsStatus');
+    status.style.display = 'block';
+    setTimeout(() => status.style.display = 'none', 2000);
+  }
+
+  // ---- Products ----
+  function loadProducts(){
+    return JSON.parse(localStorage.getItem('nonMarkazi_products') || '[]');
+  }
+  function saveProducts(list){
+    localStorage.setItem('nonMarkazi_products', JSON.stringify(list));
+  }
+
+  function renderProductsList(){
+    const products = loadProducts();
+    const container = document.getElementById('productsList');
+    container.innerHTML = '';
+    products.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <label>Nomi</label>
+        <input type="text" value="${p.name || ''}" onchange="updateProduct(${i}, 'name', this.value)">
+        <label>Narxi (so'm)</label>
+        <input type="text" value="${p.price || ''}" onchange="updateProduct(${i}, 'price', this.value)">
+        <label>Tavsif</label>
+        <input type="text" value="${p.desc || ''}" onchange="updateProduct(${i}, 'desc', this.value)">
+        <label>Rasm</label>
+        <input type="file" accept="image/*" onchange="uploadImage(${i}, this)">
+        ${p.image ? `<img class="preview" src="${p.image}">` : ''}
+        <div class="row-actions">
+          <button class="delete-btn" onclick="deleteProduct(${i})">O'chirish</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function updateProduct(index, field, value){
+    const products = loadProducts();
+    products[index][field] = value;
+    saveProducts(products);
+  }
+
+  function uploadImage(index, input){
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const products = loadProducts();
+      products[index].image = e.target.result;
+      saveProducts(products);
+      renderProductsList();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addProduct(){
+    const products = loadProducts();
+    products.push({ name: 'Yangi mahsulot', price: '', desc: '', image: '' });
+    saveProducts(products);
+    renderProductsList();
+  }
+
+  function deleteProduct(index){
+    if(!confirm('Ushbu mahsulotni o\'chirishga ishonchingiz komilmi?')) return;
+    const products = loadProducts();
+    products.splice(index, 1);
+    saveProducts(products);
+    renderProductsList();
+  }
+</script>
+
+</body>
+</html>
