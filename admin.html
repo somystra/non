@@ -65,29 +65,6 @@
   <button class="logout" onclick="logout()">Chiqish</button>
   <h1>Axmadjon Non Markazi — boshqaruv</h1>
 
-  <h2>Aloqa va sayt ma'lumotlari</h2>
-  <div class="card">
-    <label>Manzil (matn sifatida, ko'rsatish uchun)</label>
-    <input type="text" id="s_address" placeholder="Ko'cha, mahalla, tuman">
-    <label>Google Maps havolasi</label>
-    <input type="text" id="s_mapsLink" placeholder="Google Maps'dan nusxa olingan link">
-    <div style="font-size:0.78rem;color:#8A7860;margin-top:4px;">
-      Google Maps'da joyni toping → "Ulashish" (Share) → "Havolani nusxalash" (Copy link) → shu yerga joylang.
-    </div>
-    <label>Ish vaqti</label>
-    <input type="text" id="s_hours" placeholder="masalan: har kuni 06:00 - 21:00">
-    <label>Telefon raqam</label>
-    <input type="text" id="s_phone" placeholder="+998901234567">
-    <label>Bosh sahifadagi qisqa tavsif</label>
-    <textarea id="s_heroDesc"></textarea>
-    <label>"Biz haqimizda" matni</label>
-    <textarea id="s_aboutText"></textarea>
-    <div class="row-actions">
-      <button class="save-btn" onclick="saveSettings()">Saqlash</button>
-    </div>
-    <div class="status" id="settingsStatus">✔ Saqlandi</div>
-  </div>
-
   <h2>Mahsulotlar</h2>
   <div id="productsList"></div>
   <button class="add-btn" onclick="addProduct()">+ Yangi mahsulot qo'shish</button>
@@ -135,41 +112,11 @@
   function showPanel(){
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('panel').style.display = 'block';
-    loadSettingsToForm();
     listenProducts();
   }
 
   if(sessionStorage.getItem('nonMarkazi_admin_ok') === '1'){
     showPanel();
-  }
-
-  // ---- Settings ----
-  function loadSettingsToForm(){
-    db.collection('settings').doc('main').get().then(doc => {
-      const s = doc.exists ? doc.data() : {};
-      document.getElementById('s_address').value = s.address || '';
-      document.getElementById('s_mapsLink').value = s.mapsLink || '';
-      document.getElementById('s_hours').value = s.hours || '';
-      document.getElementById('s_phone').value = s.phone || '';
-      document.getElementById('s_heroDesc').value = s.heroDesc || '';
-      document.getElementById('s_aboutText').value = s.aboutText || '';
-    });
-  }
-
-  function saveSettings(){
-    const s = {
-      address: document.getElementById('s_address').value,
-      mapsLink: document.getElementById('s_mapsLink').value,
-      hours: document.getElementById('s_hours').value,
-      phone: document.getElementById('s_phone').value,
-      heroDesc: document.getElementById('s_heroDesc').value,
-      aboutText: document.getElementById('s_aboutText').value
-    };
-    db.collection('settings').doc('main').set(s, { merge: true }).then(() => {
-      const status = document.getElementById('settingsStatus');
-      status.style.display = 'block';
-      setTimeout(() => status.style.display = 'none', 2000);
-    }).catch(err => alert('Xato: ' + err.message));
   }
 
   // ---- Products ----
