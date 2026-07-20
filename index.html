@@ -102,6 +102,30 @@
   .product p{font-family:sans-serif;font-size:0.78rem;color:#8A7860;}
   .empty-note{grid-column:1/-1;font-family:sans-serif;font-size:0.85rem;color:#9A8974;padding:16px;text-align:center;}
 
+  .videos{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .video-card{
+    background:#fff;border:1px solid var(--cream-line);border-radius:14px;
+    padding:8px;overflow:hidden;
+  }
+  .video-card video{
+    width:100%;aspect-ratio:9/16;object-fit:cover;
+    border-radius:8px;background:#000;display:block;
+  }
+  .video-card .vlabel{
+    font-family:sans-serif;font-size:0.72rem;color:#8A7860;
+    text-align:center;margin-top:6px;
+  }
+  @media(max-width:400px){ .videos{gap:8px;} }
+  .video-card.hidden-video{display:none;}
+  .show-all-btn{
+    display:block;width:100%;margin-top:14px;
+    background:transparent;color:var(--clay-dark);
+    border:1.5px solid var(--clay-dark);border-radius:30px;
+    font-family:sans-serif;font-weight:600;font-size:0.88rem;
+    padding:12px;cursor:pointer;transition:background .15s ease, color .15s ease;
+  }
+  .show-all-btn:hover{background:var(--clay-dark);color:var(--flour);}
+
   .about{background:var(--clay-dark);color:var(--flour);border-radius:20px;text-align:center;}
   .about .eyebrow{color:var(--wheat);}
   .about h2{color:var(--flour);}
@@ -147,6 +171,14 @@
   <div class="products" id="productsGrid"></div>
 </section>
 
+<section id="videosSection">
+  <div class="eyebrow">Galereya</div>
+  <h2>Videolarimiz</h2>
+  <div class="videos" id="videosGrid"></div>
+  <button class="show-all-btn" id="showAllBtn" onclick="showAllVideos()">Barchasini ko'rish (20 ta)</button>
+  <button class="show-all-btn" id="showLessBtn" onclick="showLessVideos()" style="display:none;">Kamroq ko'rish</button>
+</section>
+
 <section class="about">
   <div class="eyebrow">Biz haqimizda</div>
   <h2>Mahalladagi ishonchli manzil</h2>
@@ -178,6 +210,7 @@
 
 <footer>
   © 2026 Axmadjon Non Markazi. Barcha huquqlar himoyalangan.
+  <div style="margin-top:6px;font-size:0.68rem;color:#B3A88F;">Sayt NetGlobal jamoasi tomonidan yaratilgan</div>
 </footer>
 
 <!-- Firebase SDK -->
@@ -261,6 +294,42 @@
     }
   }
 
+  // ---- Videolar (GitHub repo: somystra/non, video1.mp4 ... video20.mp4) ----
+  const TOTAL_VIDEOS = 20;
+  const VISIBLE_VIDEOS = 4;
+
+  function renderVideos(){
+    const grid = document.getElementById('videosGrid');
+    grid.innerHTML = '';
+    const baseUrl = 'https://raw.githubusercontent.com/somystra/non/main/';
+    for(let i = 1; i <= TOTAL_VIDEOS; i++){
+      const card = document.createElement('div');
+      card.className = 'video-card' + (i > VISIBLE_VIDEOS ? ' hidden-video' : '');
+      card.innerHTML = `
+        <video controls preload="none" playsinline src="${baseUrl}video${i}.mp4"></video>
+        <div class="vlabel">Video ${i}</div>
+      `;
+      grid.appendChild(card);
+    }
+    const btn = document.getElementById('showAllBtn');
+    if(TOTAL_VIDEOS <= VISIBLE_VIDEOS){ btn.style.display = 'none'; }
+  }
+  renderVideos();
+
+  function showAllVideos(){
+    document.querySelectorAll('#videosGrid .hidden-video').forEach(el => el.classList.remove('hidden-video'));
+    document.getElementById('showAllBtn').style.display = 'none';
+    document.getElementById('showLessBtn').style.display = 'block';
+  }
+
+  function showLessVideos(){
+    const cards = document.querySelectorAll('#videosGrid .video-card');
+    cards.forEach((el, i) => { if(i >= VISIBLE_VIDEOS) el.classList.add('hidden-video'); });
+    document.getElementById('showLessBtn').style.display = 'none';
+    document.getElementById('showAllBtn').style.display = 'block';
+    document.getElementById('videosSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   // Real-time: mahsulotlar ro'yxati o'zgarsa, sahifa avtomatik yangilanadi
   db.collection('products').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
     const products = snapshot.docs.map(doc => doc.data());
@@ -269,11 +338,6 @@
     console.error('Mahsulotlarni yuklashda xato:', err);
     document.getElementById('productsGrid').innerHTML = '<div class="empty-note">Mahsulotlarni yuklab bo\'lmadi.</div>';
   });
-
-  // Real-time: sozlamalar (manzil, telefon va h.k.) o'zgarsa, avtomatik yangilanadi
-  db.collection('settings').doc('main').onSnapshot(doc => {
-    if(doc.exists) renderSettings(doc.data());
-  }, err => console.error('Sozlamalarni yuklashda xato:', err));
 </script>
 
 </body>
