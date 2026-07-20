@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Axmadjon Non Markazi</title>
+<style>
+  :root{
+    --clay: #A6532A;
+    --clay-dark: #6E3418;
+    --wheat: #D9A441;
+    --flour: #F6EFE3;
+    --charcoal: #2B211A;
+    --cream-line: #E8DCC4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--flour);
+    color:var(--charcoal);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height:1.5;
+  }
+  .logo{
+    width:44px;height:44px;border-radius:50%;
+    object-fit:cover;flex-shrink:0;
+    box-shadow:0 0 0 2px var(--wheat);
+  }
+  header{
+    display:flex;align-items:center;gap:14px;
+    padding:20px 24px;
+    border-bottom:1px solid var(--cream-line);
+  }
+  header .name{font-size:1.1rem;letter-spacing:0.3px;}
+  header .name span{display:block;font-size:0.7rem;color:var(--clay);font-family:sans-serif;letter-spacing:1.2px;text-transform:uppercase;margin-top:2px;}
+
+  .hero{
+    padding:56px 24px 44px;
+    text-align:center;
+    background:linear-gradient(180deg, var(--flour) 0%, #F1E6D0 100%);
+    animation:fadeUp .8s ease both;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+  .hero .logo{width:88px;height:88px;margin:0 auto 20px;box-shadow:0 0 0 3px var(--wheat);}
+  .hero h1{
+    font-size:2.2rem;
+    line-height:1.15;
+    color:var(--clay-dark);
+    max-width:520px;margin:0 auto 14px;
+  }
+  .hero p{
+    font-family:sans-serif;
+    color:#5A4A3A;
+    font-size:0.98rem;
+    max-width:400px;
+    margin:0 auto 26px;
+  }
+  .cta{
+    display:inline-block;
+    background:var(--clay);
+    color:var(--flour);
+    font-family:sans-serif;
+    font-weight:600;
+    text-decoration:none;
+    padding:14px 28px;
+    border-radius:30px;
+    font-size:0.92rem;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .cta:hover{background:var(--clay-dark);transform:translateY(-2px);}
+  .cta.secondary{
+    background:transparent;color:var(--clay-dark);
+    border:1.5px solid var(--clay-dark);margin-left:10px;
+  }
+  .cta.secondary:hover{background:var(--clay-dark);color:var(--flour);}
+
+  .badges{
+    display:flex;justify-content:center;gap:28px;
+    margin-top:36px;flex-wrap:wrap;
+  }
+  .badge{font-family:sans-serif;text-align:center;}
+  .badge .num{font-size:1.8rem;font-weight:700;color:var(--clay-dark);}
+  .badge .label{font-size:0.75rem;color:#8A7860;text-transform:uppercase;letter-spacing:0.5px;}
+
+  section{padding:44px 24px;max-width:640px;margin:0 auto;}
+  .eyebrow{
+    font-family:sans-serif;font-size:0.7rem;letter-spacing:2px;
+    text-transform:uppercase;color:var(--clay);margin-bottom:8px;text-align:center;
+  }
+  h2{font-size:1.4rem;text-align:center;color:var(--clay-dark);margin-bottom:28px;}
+
+  .products{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .product{
+    background:#fff;border:1px solid var(--cream-line);border-radius:16px;
+    padding:16px;text-align:center;overflow:hidden;
+    transition:transform .2s ease, box-shadow .2s ease;
+    opacity:0;animation:fadeUp .6s ease forwards;
+  }
+  .product:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(110,52,24,0.12);}
+  .product img{width:100%;height:96px;object-fit:cover;border-radius:10px;margin-bottom:10px;background:var(--cream-line);}
+  .product h3{font-size:0.95rem;margin-bottom:4px;}
+  .product .price{font-family:sans-serif;font-size:0.88rem;color:var(--clay);font-weight:700;}
+  .product p{font-family:sans-serif;font-size:0.78rem;color:#8A7860;}
+  .empty-note{grid-column:1/-1;font-family:sans-serif;font-size:0.85rem;color:#9A8974;padding:16px;text-align:center;}
+
+  .about{background:var(--clay-dark);color:var(--flour);border-radius:20px;text-align:center;}
+  .about .eyebrow{color:var(--wheat);}
+  .about h2{color:var(--flour);}
+  .about p{font-family:sans-serif;font-size:0.92rem;color:#EBD9BE;max-width:460px;margin:0 auto;}
+
+  .info{display:flex;flex-direction:column;gap:12px;}
+  .info-row{
+    display:flex;align-items:center;gap:14px;
+    background:#fff;border:1px solid var(--cream-line);border-radius:14px;
+    padding:15px 18px;font-family:sans-serif;
+  }
+  .info-row .icon{width:18px;height:18px;flex-shrink:0;background:var(--wheat);border-radius:50%;}
+  .info-row div{font-size:0.88rem;}
+  .info-row a{color:var(--clay-dark);text-decoration:none;font-weight:600;}
+
+  footer{text-align:center;padding:28px 24px 36px;font-family:sans-serif;font-size:0.76rem;color:#9A8974;}
+
+  @media(min-width:640px){ .hero h1{font-size:2.8rem;} }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="logo.jpg" alt="Axmadjon Non Markazi logotipi">
+  <div class="name">Axmadjon Non Markazi<span>Non va kanditor mahsulotlari</span></div>
+</header>
+
+<div class="hero">
+  <img class="logo" src="logo.jpg" alt="Axmadjon Non Markazi logotipi">
+  <h1>Tandirdan yangi uzilgan non — har kuni sizga yaqin</h1>
+  <p id="heroDesc">Non va shirinlik mahsulotlarimiz bilan mahallamizga xizmat qilib kelmoqdamiz.</p>
+  <a id="callBtn" href="tel:+998905266668" class="cta">Qo'ng'iroq qilish</a>
+  <a href="#manzil" class="cta secondary">Manzilni ko'rish</a>
+
+  <div class="badges">
+    <div class="badge"><div class="num">5</div><div class="label">yil non markazi</div></div>
+    <div class="badge"><div class="num">16</div><div class="label">yil kanditor</div></div>
+  </div>
+</div>
+
+<section>
+  <div class="eyebrow">Mahsulotlar</div>
+  <h2>Non va kanditor mahsulotlari</h2>
+  <div class="products" id="productsGrid"></div>
+</section>
+
+<section class="about">
+  <div class="eyebrow">Biz haqimizda</div>
+  <h2>Mahalladagi ishonchli manzil</h2>
+  <p id="aboutText">Kanditor yo'nalishimiz 16 yildan beri, non markazimiz esa 5 yildan beri mijozlarga sifatli xizmat ko'rsatib kelmoqda. Har kuni yangi tayyorlanadi.</p>
+</section>
+
+<section id="manzil">
+  <div class="eyebrow">Aloqa</div>
+  <h2>Bizni toping</h2>
+  <div class="info">
+    <div class="info-row"><div class="icon"></div><div id="addressRow">Manzil: tez orada qo'shiladi</div></div>
+    <div class="info-row"><div class="icon"></div><div id="hoursRow">Ish vaqti: tez orada qo'shiladi</div></div>
+    <div class="info-row"><div class="icon"></div><div>Telefon: <a href="tel:+998905266668">+998 90 526 66 68</a></div></div>
+    <div class="info-row"><div class="icon"></div><div>Telegram: <a href="https://t.me/axmadjonnon" target="_blank">@axmadjonnon</a></div></div>
+    <div class="info-row"><div class="icon"></div><div>Instagram: <a href="https://www.instagram.com/axmadjon_non_markazi/" target="_blank">@axmadjon_non_markazi</a></div></div>
+  </div>
+</section>
+
+<div id="mapWrap" style="display:none;max-width:900px;margin:0 auto 48px;padding:0 24px;">
+  <iframe id="mapFrame" width="100%" height="420" style="border:0;border-radius:18px;display:block;" loading="lazy" allowfullscreen></iframe>
+  <a id="directionsLink" href="#" target="_blank" class="cta" style="display:block;text-align:center;margin-top:14px;max-width:260px;margin-left:auto;margin-right:auto;">Yo'l-yo'riq olish</a>
+</div>
+
+<footer>
+  © 2026 Axmadjon Non Markazi. Barcha huquqlar himoyalangan.
+</footer>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9M_QtHJ71sND6bD8h8UpouLKafiBxgOk",
+    authDomain: "ahmadjonnonmarkaz.firebaseapp.com",
+    projectId: "ahmadjonnonmarkaz",
+    storageBucket: "ahmadjonnonmarkaz.firebasestorage.app",
+    messagingSenderId: "863026607152",
+    appId: "1:863026607152:web:612c5daba7589398d469f5",
+    measurementId: "G-6C21VRCCMK"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  function extractLatLng(link){
+    if(!link) return null;
+    let m = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if(m) return { lat: m[1], lng: m[2] };
+    m = link.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if(m) return { lat: m[1], lng: m[2] };
+    m = link.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+    if(m) return { lat: m[1], lng: m[2] };
+    m = link.match(/\/search\/(-?\d+\.\d+),\+?(-?\d+\.\d+)/);
+    if(m) return { lat: m[1], lng: m[2] };
+    // Umumiy fallback: ixtiyoriy joydagi "lat,lng" juftlikni topadi
+    m = link.match(/(-?\d{1,3}\.\d+),\s*\+?(-?\d{1,3}\.\d+)/);
+    if(m) return { lat: m[1], lng: m[2] };
+    return null;
+  }
+
+  function renderProducts(products){
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = '';
+    if(products.length === 0){
+      grid.innerHTML = '<div class="empty-note">Hozircha mahsulotlar qo\'shilmagan.</div>';
+      return;
+    }
+    products.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'product';
+      card.style.animationDelay = (i * 0.08) + 's';
+      card.innerHTML = `
+        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : ''}
+        <h3>${p.name}</h3>
+        ${p.price ? `<div class="price">${p.price} so'm</div>` : ''}
+        <p>${p.desc || ''}</p>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function renderSettings(s){
+    if(s.address) document.getElementById('addressRow').textContent = 'Manzil: ' + s.address;
+    if(s.hours) document.getElementById('hoursRow').textContent = 'Ish vaqti: ' + s.hours;
+    if(s.aboutText) document.getElementById('aboutText').textContent = s.aboutText;
+    if(s.heroDesc) document.getElementById('heroDesc').textContent = s.heroDesc;
+    if(s.phone){
+      document.getElementById('callBtn').href = 'tel:' + s.phone;
+    }
+    if(s.mapsLink){
+      const coords = extractLatLng(s.mapsLink);
+      const mapWrap = document.getElementById('mapWrap');
+      const mapFrame = document.getElementById('mapFrame');
+      const directionsLink = document.getElementById('directionsLink');
+      if(coords){
+        mapFrame.src = `https://www.google.com/maps?q=${coords.lat},${coords.lng}&output=embed`;
+      } else {
+        mapFrame.src = s.mapsLink.replace('/maps/', '/maps/embed/');
+      }
+      directionsLink.href = s.mapsLink;
+      mapWrap.style.display = 'block';
+    }
+  }
+
+  // Real-time: mahsulotlar ro'yxati o'zgarsa, sahifa avtomatik yangilanadi
+  db.collection('products').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
+    const products = snapshot.docs.map(doc => doc.data());
+    renderProducts(products);
+  }, err => {
+    console.error('Mahsulotlarni yuklashda xato:', err);
+    document.getElementById('productsGrid').innerHTML = '<div class="empty-note">Mahsulotlarni yuklab bo\'lmadi.</div>';
+  });
+
+  // Real-time: sozlamalar (manzil, telefon va h.k.) o'zgarsa, avtomatik yangilanadi
+  db.collection('settings').doc('main').onSnapshot(doc => {
+    if(doc.exists) renderSettings(doc.data());
+  }, err => console.error('Sozlamalarni yuklashda xato:', err));
+</script>
+
+</body>
+</html>
