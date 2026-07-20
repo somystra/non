@@ -66,6 +66,9 @@
   <h1>Axmadjon Non Markazi — boshqaruv</h1>
 
   <h2>Mahsulotlar</h2>
+  <p style="font-size:0.8rem;color:#8A7860;margin-bottom:14px;">
+    Rasmni <a href="https://imgbb.com" target="_blank" style="color:var(--clay-dark);font-weight:600;">imgbb.com</a> ga yuklang → "Direct link" havolasini nusxalang → shu yerga joylashtiring.
+  </p>
   <div id="productsList"></div>
   <button class="add-btn" onclick="addProduct()">+ Yangi mahsulot qo'shish</button>
 </div>
@@ -73,7 +76,6 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -87,7 +89,6 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-  const storage = firebase.storage();
 
   const ADMIN_PASSWORD = "nonmarkazi2026"; // shu parolni xohlagancha o'zgartiring
 
@@ -140,10 +141,9 @@
         <input type="text" value="${p.price || ''}" onchange="updateProduct('${p.id}', 'price', this.value)">
         <label>Tavsif</label>
         <input type="text" value="${p.desc || ''}" onchange="updateProduct('${p.id}', 'desc', this.value)">
-        <label>Rasm</label>
-        <input type="file" accept="image/*" onchange="uploadImage('${p.id}', this)">
+        <label>Rasm havolasi (link)</label>
+        <input type="text" placeholder="https://i.ibb.co/..." value="${p.image || ''}" onchange="updateProduct('${p.id}', 'image', this.value)">
         ${p.image ? `<img class="preview" src="${p.image}">` : ''}
-        <div class="status" id="status_${p.id}">✔ Rasm yuklandi</div>
         <div class="row-actions">
           <button class="delete-btn" onclick="deleteProduct('${p.id}')">O'chirish</button>
         </div>
@@ -155,19 +155,6 @@
   function updateProduct(id, field, value){
     db.collection('products').doc(id).update({ [field]: value })
       .catch(err => alert('Xato: ' + err.message));
-  }
-
-  function uploadImage(id, input){
-    const file = input.files[0];
-    if(!file) return;
-    const statusEl = document.getElementById('status_' + id);
-    const ref = storage.ref('products/' + id + '_' + Date.now() + '_' + file.name);
-    ref.put(file).then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => db.collection('products').doc(id).update({ image: url }))
-      .then(() => {
-        if(statusEl){ statusEl.style.display = 'block'; setTimeout(() => statusEl.style.display = 'none', 2000); }
-      })
-      .catch(err => alert('Rasm yuklashda xato: ' + err.message));
   }
 
   function addProduct(){
