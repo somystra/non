@@ -93,7 +93,25 @@
   <button class="add-btn" onclick="addProduct()">+ Yangi mahsulot qo'shish</button>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
 <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA9M_QtHJ71sND6bD8h8UpouLKafiBxgOk",
+    authDomain: "ahmadjonnonmarkaz.firebaseapp.com",
+    projectId: "ahmadjonnonmarkaz",
+    storageBucket: "ahmadjonnonmarkaz.firebasestorage.app",
+    messagingSenderId: "863026607152",
+    appId: "1:863026607152:web:612c5daba7589398d469f5",
+    measurementId: "G-6C21VRCCMK"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
   const ADMIN_PASSWORD = "nonmarkazi2026"; // shu parolni xohlagancha o'zgartiring
 
   function tryLogin(){
@@ -118,7 +136,7 @@
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('panel').style.display = 'block';
     loadSettingsToForm();
-    renderProductsList();
+    listenProducts();
   }
 
   if(sessionStorage.getItem('nonMarkazi_admin_ok') === '1'){
@@ -127,13 +145,15 @@
 
   // ---- Settings ----
   function loadSettingsToForm(){
-    const s = JSON.parse(localStorage.getItem('nonMarkazi_settings') || '{}');
-    document.getElementById('s_address').value = s.address || '';
-    document.getElementById('s_mapsLink').value = s.mapsLink || '';
-    document.getElementById('s_hours').value = s.hours || '';
-    document.getElementById('s_phone').value = s.phone || '';
-    document.getElementById('s_heroDesc').value = s.heroDesc || '';
-    document.getElementById('s_aboutText').value = s.aboutText || '';
+    db.collection('settings').doc('main').get().then(doc => {
+      const s = doc.exists ? doc.data() : {};
+      document.getElementById('s_address').value = s.address || '';
+      document.getElementById('s_mapsLink').value = s.mapsLink || '';
+      document.getElementById('s_hours').value = s.hours || '';
+      document.getElementById('s_phone').value = s.phone || '';
+      document.getElementById('s_heroDesc').value = s.heroDesc || '';
+      document.getElementById('s_aboutText').value = s.aboutText || '';
+    });
   }
 
   function saveSettings(){
@@ -145,77 +165,75 @@
       heroDesc: document.getElementById('s_heroDesc').value,
       aboutText: document.getElementById('s_aboutText').value
     };
-    localStorage.setItem('nonMarkazi_settings', JSON.stringify(s));
-    const status = document.getElementById('settingsStatus');
-    status.style.display = 'block';
-    setTimeout(() => status.style.display = 'none', 2000);
+    db.collection('settings').doc('main').set(s, { merge: true }).then(() => {
+      const status = document.getElementById('settingsStatus');
+      status.style.display = 'block';
+      setTimeout(() => status.style.display = 'none', 2000);
+    }).catch(err => alert('Xato: ' + err.message));
   }
 
   // ---- Products ----
-  function loadProducts(){
-    return JSON.parse(localStorage.getItem('nonMarkazi_products') || '[]');
-  }
-  function saveProducts(list){
-    localStorage.setItem('nonMarkazi_products', JSON.stringify(list));
+  function listenProducts(){
+    db.collection('products').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
+      const products = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderProductsList(products);
+    }, err => console.error(err));
   }
 
-  function renderProductsList(){
-    const products = loadProducts();
+  function renderProductsList(products){
     const container = document.getElementById('productsList');
     container.innerHTML = '';
-    products.forEach((p, i) => {
+    products.forEach(p => {
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
         <label>Nomi</label>
-        <input type="text" value="${p.name || ''}" onchange="updateProduct(${i}, 'name', this.value)">
+        <input type="text" value="${p.name || ''}" onchange="updateProduct('${p.id}', 'name', this.value)">
         <label>Narxi (so'm)</label>
-        <input type="text" value="${p.price || ''}" onchange="updateProduct(${i}, 'price', this.value)">
+        <input type="text" value="${p.price || ''}" onchange="updateProduct('${p.id}', 'price', this.value)">
         <label>Tavsif</label>
-        <input type="text" value="${p.desc || ''}" onchange="updateProduct(${i}, 'desc', this.value)">
+        <input type="text" value="${p.desc || ''}" onchange="updateProduct('${p.id}', 'desc', this.value)">
         <label>Rasm</label>
-        <input type="file" accept="image/*" onchange="uploadImage(${i}, this)">
+        <input type="file" accept="image/*" onchange="uploadImage('${p.id}', this)">
         ${p.image ? `<img class="preview" src="${p.image}">` : ''}
+        <div class="status" id="status_${p.id}">✔ Rasm yuklandi</div>
         <div class="row-actions">
-          <button class="delete-btn" onclick="deleteProduct(${i})">O'chirish</button>
+          <button class="delete-btn" onclick="deleteProduct('${p.id}')">O'chirish</button>
         </div>
       `;
       container.appendChild(card);
     });
   }
 
-  function updateProduct(index, field, value){
-    const products = loadProducts();
-    products[index][field] = value;
-    saveProducts(products);
+  function updateProduct(id, field, value){
+    db.collection('products').doc(id).update({ [field]: value })
+      .catch(err => alert('Xato: ' + err.message));
   }
 
-  function uploadImage(index, input){
+  function uploadImage(id, input){
     const file = input.files[0];
     if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e){
-      const products = loadProducts();
-      products[index].image = e.target.result;
-      saveProducts(products);
-      renderProductsList();
-    };
-    reader.readAsDataURL(file);
+    const statusEl = document.getElementById('status_' + id);
+    const ref = storage.ref('products/' + id + '_' + Date.now() + '_' + file.name);
+    ref.put(file).then(snapshot => snapshot.ref.getDownloadURL())
+      .then(url => db.collection('products').doc(id).update({ image: url }))
+      .then(() => {
+        if(statusEl){ statusEl.style.display = 'block'; setTimeout(() => statusEl.style.display = 'none', 2000); }
+      })
+      .catch(err => alert('Rasm yuklashda xato: ' + err.message));
   }
 
   function addProduct(){
-    const products = loadProducts();
-    products.push({ name: 'Yangi mahsulot', price: '', desc: '', image: '' });
-    saveProducts(products);
-    renderProductsList();
+    db.collection('products').add({
+      name: 'Yangi mahsulot', price: '', desc: '', image: '',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(err => alert('Xato: ' + err.message));
   }
 
-  function deleteProduct(index){
+  function deleteProduct(id){
     if(!confirm('Ushbu mahsulotni o\'chirishga ishonchingiz komilmi?')) return;
-    const products = loadProducts();
-    products.splice(index, 1);
-    saveProducts(products);
-    renderProductsList();
+    db.collection('products').doc(id).delete()
+      .catch(err => alert('Xato: ' + err.message));
   }
 </script>
 
